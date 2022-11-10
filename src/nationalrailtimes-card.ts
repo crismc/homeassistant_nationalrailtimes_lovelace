@@ -11,14 +11,14 @@ import {
   getLovelace,
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 
-import type { SoutheasternRailCardConfig } from './types';
+import type { NationalRailTimesCardConfig } from './types';
 import { actionHandler } from './action-handler-directive';
 // import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
 /* eslint no-console: 0 */
 // console.info(
-//   `%c  SOUTHEASTERN-RAIL-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
+//   `%c  NATIONAL-RAIL-TIMES-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
 //   'color: orange; font-weight: bold; background: black',
 //   'color: white; font-weight: bold; background: dimgray',
 // );
@@ -26,16 +26,16 @@ import { localize } from './localize/localize';
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
-  type: 'southeastern-rail-card',
-  name: 'Southeastern Rail Card',
-  description: 'A custom template to present departure details from a configured station enabled from the Southeastern Rail Integration',
+  type: 'national-rail-times-card',
+  name: 'National Rail Times Card',
+  description: 'A custom template to present departure details from a configured station enabled from the National Rail Departure Times Integration Component',
 });
 
-@customElement('southeastern-rail-card')
-export class SoutheasternRailCard extends LitElement {
+@customElement('national-rail-times-card')
+export class NationalRailTimesCard extends LitElement {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import('./editor');
-    return document.createElement('southeastern-rail-card-editor');
+    return document.createElement('national-rail-times-card-editor');
   }
 
   public static getStubConfig(): Record<string, unknown> {
@@ -44,9 +44,9 @@ export class SoutheasternRailCard extends LitElement {
 
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @state() private config!: SoutheasternRailCardConfig;
+  @state() private config!: NationalRailTimesCardConfig;
 
-  public setConfig(config: SoutheasternRailCardConfig): void {
+  public setConfig(config: NationalRailTimesCardConfig): void {
     if (!config) {
       throw new Error(localize('common.invalid_configuration'));
     }
@@ -271,13 +271,13 @@ export class SoutheasternRailCard extends LitElement {
           hasDoubleClick: hasAction(this.config.double_tap_action),
         })}
         tabindex="0"
-        .label=${`Southeastern Rail: ${this.config.entity || 'No Entity Defined'}`}
+        .label=${`National Rail: ${this.config.entity || 'No Entity Defined'}`}
       >
         <div class="card-content">
           <div class="title">
             <ha-icon class="title_icon" icon="mdi:bus-clock"></ha-icon>
             <div class="title_inner">
-              ${this.config.name ? this.config.name : entity ? entity.attributes.friendly_name : "Southeastern Rail"}
+              ${this.config.name ? this.config.name : entity ? entity.attributes.friendly_name : "National Rail"}
               ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
             </div>
           </div>
