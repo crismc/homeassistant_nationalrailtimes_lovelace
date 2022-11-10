@@ -1,0 +1,13 @@
+{
+  "common": {
+    "version": "Version",
+    "invalid_configuration": "Invalid configuration",
+    "show_warning": "Show Warning",
+    "show_error": "Show Error",
+    "show_status": "Show Status",
+    "show_arrival_time": "Show Arrival Time",
+    "show_departure_time": "Show Departure Time",
+    "show_callingpoints": "Show Calling Points",
+    "show_via_destination": "Show Via Destination"
+  }
+}
