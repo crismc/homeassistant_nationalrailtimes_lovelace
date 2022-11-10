@@ -6,8 +6,6 @@ import { fireEvent } from 'custom-card-helpers';
 
 const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.maxTouchPoints > 0;
 
-const CUSTOM_ELEMENT_NAME = 'action-handler-nationalrailtimes';
-
 interface ActionHandler extends HTMLElement {
   holdTime: number;
   bind(element: Element, options): void;
@@ -164,15 +162,15 @@ class ActionHandler extends HTMLElement implements ActionHandler {
   }
 }
 
-customElements.define(CUSTOM_ELEMENT_NAME, ActionHandler);
+customElements.define('action-handler-nationalrail-times-card', ActionHandler);
 
 const getActionHandler = (): ActionHandler => {
   const body = document.body;
-  if (body.querySelector(CUSTOM_ELEMENT_NAME)) {
-    return body.querySelector(CUSTOM_ELEMENT_NAME) as ActionHandler;
+  if (body.querySelector('action-handler-nationalrail-times-card')) {
+    return body.querySelector('action-handler-nationalrail-times-card') as ActionHandler;
   }
 
-  const actionhandler = document.createElement(CUSTOM_ELEMENT_NAME);
+  const actionhandler = document.createElement('action-handler-nationalrail-times-card');
   body.appendChild(actionhandler);
 
   return actionhandler as ActionHandler;

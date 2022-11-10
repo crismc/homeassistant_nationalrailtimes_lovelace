@@ -10,7 +10,7 @@ import { ignoreSelectFiles } from './elements/ignore/select';
 import { ignoreSwitchFiles } from './elements/ignore/switch';
 
 export default {
-  input: ['src/nationalrailtimes-card.ts'],
+  input: ['src/nationalrail-times-card.ts'],
   output: {
     dir: './dist',
     format: 'es',

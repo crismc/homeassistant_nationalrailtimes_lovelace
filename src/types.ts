@@ -2,13 +2,13 @@ import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } fr
 
 declare global {
   interface HTMLElementTagNameMap {
-    'national-rail-times-card-editor': LovelaceCardEditor;
+    'nationalrail-times-card-editor': LovelaceCardEditor;
     'hui-error-card': LovelaceCard;
   }
 }
 
 // TODO Add your configuration elements here for type-checking
-export interface NationalRailTimesCardConfig extends LovelaceCardConfig {
+export interface NationalrailTimesCardConfig extends LovelaceCardConfig {
   type: string;
   name?: string;
   show_warning?: boolean;

@@ -11,14 +11,14 @@ import {
   getLovelace,
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 
-import type { NationalRailTimesCardConfig } from './types';
+import type { NationalrailTimesCardConfig } from './types';
 import { actionHandler } from './action-handler-directive';
 // import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
 /* eslint no-console: 0 */
 // console.info(
-//   `%c  NATIONAL-RAIL-TIMES-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
+//   `%c  NATIONALRAIL-TIMES-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
 //   'color: orange; font-weight: bold; background: black',
 //   'color: white; font-weight: bold; background: dimgray',
 // );
@@ -26,16 +26,16 @@ import { localize } from './localize/localize';
 // This puts your card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
-  type: 'national-rail-times-card',
+  type: 'nationalrail-times-card',
   name: 'National Rail Times Card',
-  description: 'A custom template to present departure details from a configured station enabled from the National Rail Departure Times Integration Component',
+  description: 'A custom template to present departure details from a configured station enabled from the National Rail Departure Times Integration',
 });
 
-@customElement('national-rail-times-card')
-export class NationalRailTimesCard extends LitElement {
+@customElement('nationalrail-times-card')
+export class NationalrailTimesCard extends LitElement {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import('./editor');
-    return document.createElement('national-rail-times-card-editor');
+    return document.createElement('nationalrail-times-card-editor');
   }
 
   public static getStubConfig(): Record<string, unknown> {
@@ -44,9 +44,9 @@ export class NationalRailTimesCard extends LitElement {
 
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @state() private config!: NationalRailTimesCardConfig;
+  @state() private config!: NationalrailTimesCardConfig;
 
-  public setConfig(config: NationalRailTimesCardConfig): void {
+  public setConfig(config: NationalrailTimesCardConfig): void {
     if (!config) {
       throw new Error(localize('common.invalid_configuration'));
     }

@@ -39,7 +39,7 @@ const plugins = [
 
 export default [
   {
-    input: 'src/nationalrailtimes-card.ts',
+    input: 'src/nationalrail-times-card.ts',
     output: {
       dir: 'dist',
       format: 'es',

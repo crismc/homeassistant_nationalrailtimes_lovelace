@@ -3,18 +3,18 @@ import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { HomeAssistant, fireEvent, LovelaceCardEditor } from 'custom-card-helpers';
 
 import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
-import { NationalRailTimesCardConfig } from './types';
+import { NationalrailTimesCardConfig } from './types';
 import { customElement, property, state } from 'lit/decorators';
 import { formfieldDefinition } from '../elements/formfield';
 import { selectDefinition } from '../elements/select';
 import { switchDefinition } from '../elements/switch';
 import { textfieldDefinition } from '../elements/textfield';
 
-@customElement('national-rail-times-card-editor')
-export class NationalRailTimesCardEditor extends ScopedRegistryHost(LitElement) implements LovelaceCardEditor {
+@customElement('nationalrail-times-card-editor')
+export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: NationalRailTimesCardConfig;
+  @state() private _config?: NationalrailTimesCardConfig;
 
   @state() private _helpers?: any;
 
@@ -27,7 +27,7 @@ export class NationalRailTimesCardEditor extends ScopedRegistryHost(LitElement) 
     ...formfieldDefinition,
   };
 
-  public setConfig(config: NationalRailTimesCardConfig): void {
+  public setConfig(config: NationalrailTimesCardConfig): void {
     this._config = config;
 
     this.loadCardHelpers();
