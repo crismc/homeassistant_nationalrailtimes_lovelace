@@ -49,6 +49,10 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
     return this._config?.entity || '';
   }
 
+  get _theme(): string {
+    return this._config?.theme || '';
+  }
+
   get _show_warning(): boolean {
     return this._config?.show_warning || true;
   }
@@ -77,6 +81,10 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
     return this._config?.show_departure_time || true;
   }
 
+  get _show_lastupdated(): boolean {
+    return this._config?.show_lastupdated || true;
+  }
+
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
       return html``;
@@ -84,6 +92,7 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
 
     // You can restrict on domain type
     const entities = Object.keys(this.hass.states).filter((entity) => entity.indexOf('sensor.trains_') === 0);
+    const themes = ['Default', 'Thin'];
 
     return html`
       <mwc-select
@@ -105,6 +114,19 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
         .configValue=${'name'}
         @input=${this._valueChanged}
       ></mwc-textfield>
+      <mwc-select
+        naturalMenuWidth
+        fixedMenuPosition
+        label="Theme (Required)"
+        .configValue=${'theme'}
+        .value=${this._theme}
+        @selected=${this._valueChanged ? this._valueChanged : 'Default'}
+        @closed=${(ev) => ev.stopPropagation()}
+      >
+        ${themes.map((theme) => {
+          return html`<mwc-list-item .value=${theme.toLowerCase()}>${theme}</mwc-list-item>`;
+        })}
+      </mwc-select>
       <mwc-formfield .label=${`Toggle station messages ${this._show_warning ? 'off' : 'on'}`}>
         <mwc-switch
           .checked=${this._show_warning !== false}
@@ -151,6 +173,13 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
         <mwc-switch
           .checked=${this._show_callingpoints !== false}
           .configValue=${'show_callingpoints'}
+          @change=${this._valueChanged}
+        ></mwc-switch>
+      </mwc-formfield>
+      <mwc-formfield .label=${`Toggle last updated ${this._show_lastupdated ? 'off' : 'on'}`}>
+        <mwc-switch
+          .checked=${this._show_lastupdated !== false}
+          .configValue=${'show_lastupdated'}
           @change=${this._valueChanged}
         ></mwc-switch>
       </mwc-formfield>

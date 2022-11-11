@@ -31,6 +31,17 @@ import { localize } from './localize/localize';
   description: 'A custom template to present departure details from a configured station enabled from the National Rail Departure Times Integration',
 });
 
+const THEME = {
+  DEFAULT: 'default',
+  THIN: 'thin'
+}
+
+const STATUS = {
+  SUCCESS : 'success',
+  WARNING : 'warning',
+  ERROR : 'error'
+}
+
 @customElement('nationalrail-times-card')
 export class NationalrailTimesCard extends LitElement {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
@@ -56,6 +67,7 @@ export class NationalrailTimesCard extends LitElement {
     }
 
     this.config = {
+      show_theme: THEME.DEFAULT,
       show_warning: true,
       show_error: true,
       show_via_destination: true,
@@ -63,6 +75,7 @@ export class NationalrailTimesCard extends LitElement {
       show_status: true,
       show_arrival_time: true,
       show_departure_time: true,
+      show_lastupdated: true,
       ...config,
     };
   }
@@ -81,12 +94,14 @@ export class NationalrailTimesCard extends LitElement {
     }
   }
 
-  isCancelled(entity):boolean|void {
-    if (!entity?.service) {
-      return;
+  isCancelled(attribs):boolean|void {
+    if (!attribs?.service) {
+      return true;
     }
-    const status = entity.service.etd;
-    return !(status !== "Cancelled" && entity.calling_points !== undefined);
+    
+    const status = attribs.service.etd;
+    const state = !attribs.calling_points || !(status !== "Cancelled" && attribs.calling_points !== undefined);
+    return state;
   }
 
   isDelayed(service): boolean|void {
@@ -160,26 +175,37 @@ export class NationalrailTimesCard extends LitElement {
     }
   }
 
-  protected _renderServiceStatus(entity): TemplateResult | void {
+  getStatus(attribs): string {
+    let alertType = STATUS.SUCCESS;
+    if (this.isCancelled(attribs)) {
+      alertType = STATUS.ERROR;
+    } else if (this.isDelayed(attribs) || !attribs?.service) {
+      alertType = STATUS.WARNING;
+    }
+
+    return alertType;
+  }
+
+  protected _renderServiceStatus(entity, renderer = THEME.DEFAULT): TemplateResult | void {
     if (!this.config.show_status) {
       return;
     }
 
-    let alertType = "success";
-    if (this.isCancelled(entity)) {
-      alertType = "error";
-    } else if (this.isDelayed(entity) || !entity?.service) {
-      alertType = "warning";
+    const alertType = this.getStatus(entity);
+
+    const render = function(self, entity){
+      return self.isDelayed(entity.service) ?
+        html`Delayed (<span class="delayed">${self.formatTime(entity.service.std)}</span>)`
+        :
+        entity?.service ? entity.service.etd : "Service Suspended"
     }
 
-    return html`<div class="status ${alertType}">
-      <ha-alert alert-type="${alertType}">
-        ${this.isDelayed(entity.service) ?
-          html`Delayed (<span class="delayed">${this.formatTime(entity.service.std)}</span>)`
-          :
-          entity?.service ? entity.service.etd : "Service Suspended"
-        }
-      </ha-alert>
+    return html`
+    <div class="status ${alertType}">
+      ${renderer == THEME.DEFAULT ?
+        html`<ha-alert alert-type="${alertType}">${render(this, entity)}</ha-alert>` :
+        render(this, entity)
+      }
     </div>`;
   }
 
@@ -250,19 +276,60 @@ export class NationalrailTimesCard extends LitElement {
     const entity = this.getEntity(this.config.entity);
     const re = /[0-9]/i;
 
-    if (!entity.state.match(re)) {
+    if (entity.state && entity.state != 'None' && !entity.state.match(re)) {
       return html`<div class="messages">${this._showError(entity.state)}</div>`
     }
   }
 
+  protected renderDefaultTheme(entity): TemplateResult | void {
+    return html`
+      <div class="title">
+        <ha-icon class="title_icon" icon="mdi:bus-clock"></ha-icon>
+        <div class="title_inner">
+          ${this.config.name ? this.config.name : entity ? entity.attributes.friendly_name : "National Rail"}
+          ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
+        </div>
+      </div>
+      ${this._renderErrors()}
+      ${this.stationMessage(entity.attributes)}
+      ${this._renderServiceStatus(entity.attributes, THEME.DEFAULT)}
+      ${this._renderServiceTimes(entity.attributes)}
+      ${this._renderCallingPoints(entity.attributes)}
+    `;
+  }
+
+  protected renderThinTheme(entity): TemplateResult | void {
+    return html`
+      <div class="title">
+        <ha-icon class="title_icon ${this.getStatus(entity.attributes)}" icon="mdi:bus-clock"></ha-icon>
+        <div class="title_inner">
+          <div class="title_inner_wrapper">
+            <div class="title_inner_wrapper-title">
+              ${this.config.name ? this.config.name : entity ? entity.attributes.friendly_name : "National Rail"}
+            </div>
+            <div class="title_inner_wrapper-status">
+              ${this._renderServiceStatus(entity.attributes, THEME.THIN)}
+            </div>
+          </div>
+          ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
+        </div>
+      </div>
+      ${this._renderErrors()}
+      ${this.stationMessage(entity.attributes)}
+      <div class="row">
+        ${this._renderServiceTimes(entity.attributes)}
+        ${this._renderCallingPoints(entity.attributes)}
+      </div
+    `;
+  }
+
   protected render(): TemplateResult | void {
     const entity = this.getEntity(this.config.entity);
-
+    console.log(entity);
     if (!entity) {
         return;
     }
 
-    // console.log(this.hass);
     return html`
       <ha-card
         @action=${this._handleAction}
@@ -273,20 +340,9 @@ export class NationalrailTimesCard extends LitElement {
         tabindex="0"
         .label=${`National Rail: ${this.config.entity || 'No Entity Defined'}`}
       >
-        <div class="card-content">
-          <div class="title">
-            <ha-icon class="title_icon" icon="mdi:bus-clock"></ha-icon>
-            <div class="title_inner">
-              ${this.config.name ? this.config.name : entity ? entity.attributes.friendly_name : "National Rail"}
-              ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
-            </div>
-          </div>
-          ${this._renderErrors()}
-          ${this.stationMessage(entity.attributes)}
-          ${this._renderServiceStatus(entity.attributes)}
-          ${this._renderServiceTimes(entity.attributes)}
-          ${this._renderCallingPoints(entity.attributes)}
-          <div class="content-footer">${this._renderLastUpdated()}</div>
+        <div class="card-content ${this.config.theme}_theme">
+          ${this.config.theme == THEME.THIN ? this.renderThinTheme(entity) : this.renderDefaultTheme(entity)}
+          ${this.config.show_lastupdated ? html`<div class="content-footer">${this._renderLastUpdated()}</div>` : null}
         </div>
       </ha-card>
     `;
@@ -422,12 +478,15 @@ export class NationalrailTimesCard extends LitElement {
       }
 
       /* Colours */
+      .title_icon.success,
       .status.success {
         color: var(--label-badge-green);
       }
+      .title_icon.error,
       .status.error {
         color: var(--label-badge-red);
       }
+      .title_icon.warning,
       .status.warning {
         color: var(--label-badge-yellow);
       }
@@ -440,6 +499,45 @@ export class NationalrailTimesCard extends LitElement {
       .train-times .train-times__col,
       .calling-points_container {
         background:var(--input-fill-color);
+      }
+
+      /* Themes */
+      .thin_theme .title_inner {
+        width: 100%;
+      }
+
+      .thin_theme .title_inner_wrapper {
+        display: flex;
+        gap: 5px;
+        justify-content: space-between;
+      }
+      
+      .thin_theme .status_container {
+        font-size: 0.8em;
+      }
+
+      .thin_theme .row {
+        display: flex;
+        gap: 5px;
+        justify-content: space-between;
+      }
+
+      .thin_theme .train-times {
+        margin-top: 0;
+        flex-wrap: nowrap;
+        width: 100%;
+      }
+
+      .thin_theme .train-times .train-times__col {
+        flex-direction: row;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .thin_theme .calling-points_container {
+        background: transparent;
       }
     `;
   }
