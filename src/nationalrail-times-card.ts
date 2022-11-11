@@ -458,6 +458,7 @@ export class NationalrailTimesCard extends LitElement {
 
       .calling-point_items .calling-point .arrow {
         margin-left: -8px;
+        --mdc-icon-size: 15px;
       }
 
       .last_updated {
@@ -494,6 +495,14 @@ export class NationalrailTimesCard extends LitElement {
       }
 
       /* Themes */
+      .thin_theme .title {
+        margin-bottom: 4px;
+      }
+      
+      .thin_theme .title_icon {
+        --mdc-icon-size: 20px;
+      }
+      
       .thin_theme .title_inner {
         width: 100%;
       }
@@ -512,6 +521,7 @@ export class NationalrailTimesCard extends LitElement {
         display: flex;
         gap: 5px;
         justify-content: space-between;
+        align-items: center;
       }
 
       .thin_theme .train-times {
@@ -526,10 +536,25 @@ export class NationalrailTimesCard extends LitElement {
         align-items: center;
         justify-content: center;
         gap: 5px;
+        padding: 4px 8px;
+        font-size: smaller;
+      }
+
+      .thin_theme .train-times .train-times__time {
+        font-size: small;
+      }
+
+      .thin_theme .calling-points {
+        margin-top: 0;
+        line-height: normal;
       }
 
       .thin_theme .calling-points_container {
         background: transparent;
+        font-size: smaller;
+        padding: 0;
+        margin-bottom: 0;
+        line-height: normal;
       }
     `;
   }
