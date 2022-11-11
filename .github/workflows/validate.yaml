@@ -2,7 +2,7 @@ name: HACS validation
 on:
     push:
         branches:
-            - main
+            - master
 jobs:
     validate:
         runs-on: ubuntu-latest
