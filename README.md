@@ -3,6 +3,10 @@ A custom Home Assistant card for the Lovelace theme to show next available train
 To be used with the Home Assistant custom component homeassistant_nationalrailtimes_integration (https://github.com/crismc/homeassistant_nationalrailtimes_integration)
 
 [![License][license-shield]](LICENSE.md)
+[![hacs][hacs-badge]][hacs-url]
+[![release][release-badge]][release-url]
+![downloads][downloads-badge]
+![build][build-badge]
 
 <a href="https://www.buymeacoffee.com/jedimeat" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
 
@@ -75,4 +79,18 @@ Choose "Add Resource" and enter the following:
 ### Step 7
 If you created the <config>/www directory, restart Home Assistant (Developer Tools > Restart)
 
+<!-- Badges -->
 [license-shield]: https://img.shields.io/github/license/custom-cards/boilerplate-card.svg?style=for-the-badge
+[hacs-url]: https://github.com/hacs/integration
+[hacs-badge]: https://img.shields.io/badge/hacs-default-orange.svg?style=flat-square
+[release-badge]: https://img.shields.io/github/v/release/crismc/homeassistant_nationalrailtimes_lovelace?style=flat-square
+[downloads-badge]: https://img.shields.io/github/downloads/crismc/homeassistant_nationalrailtimes_lovelace/total?style=flat-square
+[build-badge]: https://img.shields.io/github/workflow/status/crismc/homeassistant_nationalrailtimes_lovelace/Build?style=flat-square
+
+<!-- References -->
+
+[home-assistant]: https://www.home-assistant.io/
+[home-assitant-theme-docs]: https://www.home-assistant.io/integrations/frontend/#defining-themes
+[hacs]: https://hacs.xyz
+[ui-lovelace-minimalist]: https://ui-lovelace-minimalist.github.io/UI/
+[release-url]: https://github.com/crismc/homeassistant_nationalrailtimes_lovelace/releases
