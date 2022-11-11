@@ -92,6 +92,10 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
     return this._getConfig('show_lastupdated', true);
   }
 
+  get _show_offset(): boolean {
+    return this._getConfig('show_offset', true);
+  }
+
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
       return html``;
@@ -187,6 +191,13 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
         <mwc-switch
           .checked=${this._show_lastupdated !== false}
           .configValue=${'show_lastupdated'}
+          @change=${this._valueChanged}
+        ></mwc-switch>
+      </mwc-formfield>
+      <mwc-formfield .label=${`Toggle walking time to station ${this._show_offset ? 'off' : 'on'}`}>
+        <mwc-switch
+          .checked=${this._show_offset !== false}
+          .configValue=${'show_offset'}
           @change=${this._valueChanged}
         ></mwc-switch>
       </mwc-formfield>

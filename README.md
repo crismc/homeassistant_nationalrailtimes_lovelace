@@ -30,6 +30,7 @@ Based on the community driven boilerplate of best practices for Home Assistant L
 | show_arrival_time    | boolean | **Optional** | Show train service arrival time at destination         | `true`              |
 | show_departure_time  | boolean | **Optional** | Show train service departure time from primary station | `true`              |
 | show_lastupdated     | boolean | **Optional** | Show when the service last communicated with the API   | `true`              |
+| show_offset          | boolean | **Optional** | Show walking time to station offset                    | `true`              |
 | entity               | string  | **Optional** | Home Assistant entity ID.                              | `none`              |
 
 

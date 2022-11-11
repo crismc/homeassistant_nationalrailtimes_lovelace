@@ -64,6 +64,7 @@ export class NationalrailTimesCard extends LitElement {
       show_arrival_time: true,
       show_departure_time: true,
       show_lastupdated: true,
+      show_offset: true,
       ...config,
     };
   }
@@ -321,6 +322,7 @@ export class NationalrailTimesCard extends LitElement {
         <div class="title_inner">
           ${this.config.name ? this.config.name : entity ? entity.attributes.friendly_name : "National Rail"}
           ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
+          ${this.config.show_offset && entity.attributes.offset ? html`<div class="offset-time">${entity.attributes.offset} mimnutes walk to station</div>` : null}
         </div>
       </div>
       ${this._renderErrors()}
@@ -345,6 +347,7 @@ export class NationalrailTimesCard extends LitElement {
             </div>
           </div>
           ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
+          ${this.config.show_offset && entity.attributes.offset ? html`<div class="offset-time">${entity.attributes.offset} mimnutes walk to station</div>` : null}
         </div>
       </div>
       ${this._renderErrors()}
@@ -419,7 +422,8 @@ export class NationalrailTimesCard extends LitElement {
         display: flex;
         gap: 8px;
       }
-      .via-destination {
+      .via-destination,
+      .offset-time {
         padding-bottom: 8px;
         font-weight: normal;
         font-size: smaller;
