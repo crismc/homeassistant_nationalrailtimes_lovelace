@@ -18,6 +18,7 @@ export interface NationalrailTimesCardConfig extends LovelaceCardConfig {
   show_status?: boolean;
   show_arrival_time?: boolean;
   show_departure_time?: boolean;
+  show_lastupdated?: boolean;
   test_gui?: boolean;
   entity?: string;
   tap_action?: ActionConfig;

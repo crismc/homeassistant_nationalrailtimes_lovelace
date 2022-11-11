@@ -13,28 +13,16 @@ import {
 
 import type { NationalrailTimesCardConfig } from './types';
 import { actionHandler } from './action-handler-directive';
-// import { CARD_VERSION } from './const';
+import { THEME } from './const';
 import { localize } from './localize/localize';
 
-/* eslint no-console: 0 */
-// console.info(
-//   `%c  NATIONALRAIL-TIMES-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
-//   'color: orange; font-weight: bold; background: black',
-//   'color: white; font-weight: bold; background: dimgray',
-// );
-
-// This puts your card into the UI card picker dialog
+// This puts the card into the UI card picker dialog
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
   type: 'nationalrail-times-card',
   name: 'National Rail Times Card',
   description: 'A custom template to present departure details from a configured station enabled from the National Rail Departure Times Integration',
 });
-
-const THEME = {
-  DEFAULT: 'default',
-  THIN: 'thin'
-}
 
 const STATUS = {
   SUCCESS : 'success',
@@ -325,7 +313,6 @@ export class NationalrailTimesCard extends LitElement {
 
   protected render(): TemplateResult | void {
     const entity = this.getEntity(this.config.entity);
-    console.log(entity);
     if (!entity) {
         return;
     }
@@ -341,11 +328,16 @@ export class NationalrailTimesCard extends LitElement {
         .label=${`National Rail: ${this.config.entity || 'No Entity Defined'}`}
       >
         <div class="card-content ${this.config.theme}_theme">
-          ${this.config.theme == THEME.THIN ? this.renderThinTheme(entity) : this.renderDefaultTheme(entity)}
+          ${this.isTheme(THEME.THIN) ? this.renderThinTheme(entity) : this.renderDefaultTheme(entity)}
           ${this.config.show_lastupdated ? html`<div class="content-footer">${this._renderLastUpdated()}</div>` : null}
         </div>
       </ha-card>
     `;
+  }
+
+  private isTheme(theme): boolean {
+    const configTheme = this.config?.theme || THEME.DEFAULT;
+    return configTheme.toLowerCase() === theme.toLowerCase();
   }
 
   private _handleAction(ev: ActionHandlerEvent): void {

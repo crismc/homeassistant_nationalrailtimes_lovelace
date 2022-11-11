@@ -20,7 +20,7 @@ Based on the community driven boilerplate of best practices for Home Assistant L
 
 | Name                 | Type    | Requirement  | Description                                            | Default             |
 | ---------------------| ------- | ------------ | -------------------------------------------------------| ------------------- |
-| type                 | string  | **Required** | `custom:nationalrailtimes-card`                        |                     |
+| type                 | string  | **Required** | `custom:nationalrail-times-card`                        |                     |
 | name                 | string  | **Optional** | Card name based on entity                              | `none`              |
 | show_error           | boolean | **Optional** | Show error message such as no service data             | `true`              |
 | show_warning         | boolean | **Optional** | Show station alert messages                            | `true`              |

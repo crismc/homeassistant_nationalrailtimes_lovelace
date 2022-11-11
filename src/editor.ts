@@ -9,6 +9,7 @@ import { formfieldDefinition } from '../elements/formfield';
 import { selectDefinition } from '../elements/select';
 import { switchDefinition } from '../elements/switch';
 import { textfieldDefinition } from '../elements/textfield';
+import { THEME } from './const';
 
 @customElement('nationalrail-times-card-editor')
 export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) implements LovelaceCardEditor {
@@ -29,7 +30,6 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
 
   public setConfig(config: NationalrailTimesCardConfig): void {
     this._config = config;
-
     this.loadCardHelpers();
   }
 
@@ -41,48 +41,55 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
     return true;
   }
 
+  private _getConfig(prop, defaultVal): any {
+    if (this._config && prop in this._config) {
+      return this._config[prop];
+    }
+    return defaultVal
+  }
+
   get _name(): string {
-    return this._config?.name || '';
+    return this._getConfig('name', '');
   }
 
   get _entity(): string {
-    return this._config?.entity || '';
+    return this._getConfig('entity', '');
   }
 
   get _theme(): string {
-    return this._config?.theme || '';
+    return this._getConfig('theme', THEME.DEFAULT);
   }
 
   get _show_warning(): boolean {
-    return this._config?.show_warning || true;
+    return this._getConfig('show_warning', true);
   }
 
   get _show_error(): boolean {
-    return this._config?.show_error || true;
+    return this._getConfig('show_error', true);
   }
 
   get _show_via_destination(): boolean {
-    return this._config?.show_via_destination || true;
+    return this._getConfig('show_via_destination', true);
   }
 
   get _show_callingpoints(): boolean {
-    return this._config?.show_callingpoints || true;
+    return this._getConfig('show_callingpoints', true);
   }
 
   get _show_status(): boolean {
-    return this._config?.show_status || true;
+    return this._getConfig('show_status', true);
   }
 
   get _show_arrival_time(): boolean {
-    return this._config?.show_arrival_time || true;
+    return this._getConfig('show_arrival_time', true);
   }
 
   get _show_departure_time(): boolean {
-    return this._config?.show_departure_time || true;
+    return this._getConfig('show_departure_time', true);
   }
 
   get _show_lastupdated(): boolean {
-    return this._config?.show_lastupdated || true;
+    return this._getConfig('show_lastupdated', true);
   }
 
   protected render(): TemplateResult | void {
@@ -92,7 +99,7 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
 
     // You can restrict on domain type
     const entities = Object.keys(this.hass.states).filter((entity) => entity.indexOf('sensor.trains_') === 0);
-    const themes = ['Default', 'Thin'];
+    const themes = Object.values(THEME);
 
     return html`
       <mwc-select
