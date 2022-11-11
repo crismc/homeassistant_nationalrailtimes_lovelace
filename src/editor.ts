@@ -45,6 +45,9 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
     if (this._config && prop in this._config) {
       return this._config[prop];
     }
+    if (typeof defaultVal === 'function') {
+        return defaultVal();
+    }
     return defaultVal
   }
 
@@ -52,8 +55,8 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
     return this._getConfig('name', '');
   }
 
-  get _entity(): string {
-    return this._getConfig('entity', '');
+  get _entities(): string {
+    return this._getConfig('entities', []);
   }
 
   get _theme(): string {
@@ -106,13 +109,13 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
         naturalMenuWidth
         fixedMenuPosition
         label="Entity (Required)"
-        .configValue=${'entity'}
-        .value=${this._entity}
-        @selected=${this._valueChanged}
+        .configValue=${'entities'}
+        .value=${this._entities}
+        @selected=${this._addEntity}
         @closed=${(ev) => ev.stopPropagation()}
       >
-        ${entities.map((entity) => {
-          return html`<mwc-list-item .value=${entity}>${entity}</mwc-list-item>`;
+        ${entities.map((item) => {
+          return html`<mwc-list-item .value=${item}>${item}</mwc-list-item>`;
         })}
       </mwc-select>
       <mwc-textfield
@@ -224,6 +227,28 @@ export class NationalrailTimesCardEditor extends ScopedRegistryHost(LitElement) 
         };
       }
     }
+    fireEvent(this, 'config-changed', { config: this._config });
+  }
+
+  private async _addEntity(ev): Promise<void> {
+    if (!this._config || !this.hass) {
+      return;
+    }
+    
+    const target = ev.target;
+
+    if (!target.value || this[`_${target.configValue}`].includes(target.value)) {
+      return;
+    }
+    
+    if (target.configValue) {
+      const entities = this[`_${target.configValue}`].concat([target.value]);
+      this._config = {
+        ...this._config,
+        [target.configValue]: entities,
+      };
+    }
+    console.log(this._config);
     fireEvent(this, 'config-changed', { config: this._config });
   }
 

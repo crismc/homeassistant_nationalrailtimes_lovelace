@@ -76,6 +76,13 @@ export class NationalrailTimesCard extends LitElement {
     return hasConfigOrEntityChanged(this, changedProps, false);
   }
 
+  protected getEntities(entities): Array<any> {
+    if (!(entities && entities.length)) {
+      return []
+    }
+    return entities.map(entity => this.getEntity(entity));
+  }
+
   protected getEntity(entityName): any | void {
     if (this.hass && entityName in this.hass.states) {
       return this.hass.states[entityName];
@@ -248,20 +255,18 @@ export class NationalrailTimesCard extends LitElement {
     </div>`;
   }
 
-  protected _renderLastUpdated(): TemplateResult | void {
-    const entity = this.getEntity(this.config.entity);
+  protected _renderLastUpdated(entity): TemplateResult | void {
     if (entity && entity.last_updated) {
       const date = new Date(entity.last_updated);
       return html`<div class="last_updated">Last Updated: <span class="date">${date.toLocaleString()}</span></div>`;
     }
   }
 
-  protected _renderErrors(): TemplateResult | void {
+  protected _renderErrors(entity): TemplateResult | void {
     if (!this.config.show_error) {
       return;
     }
 
-    const entity = this.getEntity(this.config.entity);
     const re = /[0-9]/i;
 
     if (entity.state && entity.state != 'None' && !entity.state.match(re)) {
@@ -278,7 +283,7 @@ export class NationalrailTimesCard extends LitElement {
           ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
         </div>
       </div>
-      ${this._renderErrors()}
+      ${this._renderErrors(entity)}
       ${this.stationMessage(entity.attributes)}
       ${this._renderServiceStatus(entity.attributes, THEME.DEFAULT)}
       ${this._renderServiceTimes(entity.attributes)}
@@ -302,7 +307,7 @@ export class NationalrailTimesCard extends LitElement {
           ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
         </div>
       </div>
-      ${this._renderErrors()}
+      ${this._renderErrors(entity)}
       ${this.stationMessage(entity.attributes)}
       <div class="row">
         ${this._renderServiceTimes(entity.attributes)}
@@ -312,8 +317,8 @@ export class NationalrailTimesCard extends LitElement {
   }
 
   protected render(): TemplateResult | void {
-    const entity = this.getEntity(this.config.entity);
-    if (!entity) {
+    const entities = this.getEntities(this.config.entities);
+    if (!(entities && entities.length)) {
         return;
     }
 
@@ -325,11 +330,19 @@ export class NationalrailTimesCard extends LitElement {
           hasDoubleClick: hasAction(this.config.double_tap_action),
         })}
         tabindex="0"
-        .label=${`National Rail: ${this.config.entity || 'No Entity Defined'}`}
+        .label='National Rail Departure Times'
       >
         <div class="card-content ${this.config.theme}_theme">
-          ${this.isTheme(THEME.THIN) ? this.renderThinTheme(entity) : this.renderDefaultTheme(entity)}
-          ${this.config.show_lastupdated ? html`<div class="content-footer">${this._renderLastUpdated()}</div>` : null}
+          ${
+            entities.map(entity => {
+              return html`
+              <div class="entity">
+                ${this.isTheme(THEME.THIN) ? this.renderThinTheme(entity) : this.renderDefaultTheme(entity)}
+                ${this.config.show_lastupdated ? html`<div class="content-footer">${this._renderLastUpdated(entity)}</div>` : null}
+              </div>
+              `
+            })
+          }
         </div>
       </ha-card>
     `;
