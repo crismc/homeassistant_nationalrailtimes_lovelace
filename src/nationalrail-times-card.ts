@@ -151,6 +151,11 @@ export class NationalrailTimesCard extends LitElement {
     const callingPoints = entity?.calling_points || [];
     const indexes = callingPoints.length;
     if (indexes) {
+      const destination_stop = callingPoints.find(point => point.crs === entity.target_station_code);
+      if (destination_stop) {
+        return this.formatTime(destination_stop.st);
+      }
+      console.log('National Rail API didn\'t respond with target destination. Why did this even return?')
       const lastStop = callingPoints[indexes - 1];
       return this.formatTime(lastStop.st);
     }
@@ -229,19 +234,59 @@ export class NationalrailTimesCard extends LitElement {
     if (this.isCancelled(entity) || !this.config.show_callingpoints || !entity?.calling_points) {
       return;
     }
+    let departureStopIndex = null;
+    let targetStopIndex = null;
+
+    const renderStop = function(isHighlightedStop, innerHtml): TemplateResult {
+      return html`
+        <div class="calling-point ${isHighlightedStop ? 'arrival_stop':null}">
+          ${innerHtml}
+        </div>
+        `
+    };
+
+    const departureStopInPoints = entity.calling_points.find(stop => stop.crx == entity.station_code);
+
+    const callingStops = entity.calling_points.map((stop, index) => {
+      const isDepartureStop = stop.crs == entity.station_code;
+      const isTargetStop = stop.crs == entity.target_station_code;
+      if (isDepartureStop) departureStopIndex = index;
+      if (isTargetStop) targetStopIndex = index;
+      const isLastStop = entity.calling_points.length - 1 == index;
+
+      if (targetStopIndex && index > targetStopIndex && !isLastStop) {
+        return;
+      }
+
+      return html`
+        ${isLastStop ? renderStop(isTargetStop, html`
+          <ha-icon class="arrow" icon="mdi:arrow-right"></ha-icon>
+          <div class="calling-points__time">...</div>
+        `) : null}
+
+        ${renderStop(isTargetStop || isDepartureStop, html`
+          ${index > 0 || !departureStopInPoints ? html`<ha-icon class="arrow" icon="mdi:arrow-right"></ha-icon>`:null}
+          <div class="calling-points__stop">${stop.locationName}</div>
+          <div class="calling-points__time">(${stop.st})</div>
+        `)}
+      `;
+    });
+
+    const originLocation = entity?.service && entity.service?.origin && entity.service.origin?.location && entity.service.origin.location.locationName ? entity.service.origin.location.locationName : null;
+    
+    if (originLocation) {
+      callingStops.unshift(renderStop(!departureStopIndex, html`
+        <div class="calling-points__stop">${originLocation}</div>
+        <div class="calling-points__time">(${this.departureTime(entity)})</div>
+      `));
+    }
 
     return html`<div class="calling-points">
       <!-- <div class="calling-points__title">Calling At</div> -->
       <div class="calling-points_container">
         <marquee>
           <div class="calling-point_items">
-            ${entity.calling_points.map((stop, index) => {
-              return html`<div class="calling-point">
-                ${index > 0 ? html`<ha-icon class="arrow" icon="mdi:arrow-right"></ha-icon>`:null}
-                <div class="calling-points__stop">${stop.locationName}</div>
-                <div class="calling-points__time">(${stop.st})</div>
-              </div>`
-            })}
+            ${callingStops}
           </div>
         </marquee>
       </div>
@@ -316,7 +361,7 @@ export class NationalrailTimesCard extends LitElement {
     if (!entity) {
         return;
     }
-
+    console.log(entity);
     return html`
       <ha-card
         @action=${this._handleAction}
@@ -388,6 +433,7 @@ export class NationalrailTimesCard extends LitElement {
         font-weight: bold;
         text-transform: uppercase;
       }
+
       .status .delayed {
         text-decoration:line-through;
         font-weight: normal;
@@ -450,6 +496,12 @@ export class NationalrailTimesCard extends LitElement {
       .calling-point_items .calling-point {
         display: flex;
         gap: 8px;
+      }
+
+      .calling-point_items .calling-point.arrival_stop .calling-points__stop,
+      .calling-point_items .calling-point.arrival_stop .calling-points__time {
+        color: var(--primary-color);
+        font-size: larger;
       }
 
       .calling-point_items .calling-point .calling-points__stop {
