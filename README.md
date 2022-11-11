@@ -3,6 +3,7 @@ A custom Home Assistant card for the Lovelace theme to show next available train
 To be used with the Home Assistant custom component homeassistant_nationalrailtimes_integration (https://github.com/crismc/homeassistant_nationalrailtimes_integration)
 
 [![License][license-shield]](LICENSE.md)
+
 [![hacs][hacs-badge]][hacs-url]
 [![release][release-badge]][release-url]
 ![downloads][downloads-badge]
@@ -28,6 +29,7 @@ Based on the community driven boilerplate of best practices for Home Assistant L
 | show_status          | boolean | **Optional** | Show service status (e.g. On Time, Delayed etc)        | `true`              |
 | show_arrival_time    | boolean | **Optional** | Show train service arrival time at destination         | `true`              |
 | show_departure_time  | boolean | **Optional** | Show train service departure time from primary station | `true`              |
+| show_lastupdated     | boolean | **Optional** | Show when the service last communicated with the API   | `true`              |
 | entity               | string  | **Optional** | Home Assistant entity ID.                              | `none`              |
 
 
