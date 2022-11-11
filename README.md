@@ -4,6 +4,9 @@ To be used with the Home Assistant custom component homeassistant_nationalrailti
 
 [![License][license-shield]](LICENSE.md)
 
+<a href="https://www.buymeacoffee.com/jedimeat" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/white_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+
+
 ![alt text](https://raw.githubusercontent.com/crismc/homeassistant_nationalrailtimes_lovelace/master/screenshot.png)
 
 Based on the community driven boilerplate of best practices for Home Assistant Lovelace custom cards (Boilerplate Card by [@iantrich](https://www.github.com/iantrich) https://github.com/custom-cards/boilerplate-card)
