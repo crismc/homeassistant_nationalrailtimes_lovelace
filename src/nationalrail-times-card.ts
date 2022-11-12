@@ -245,7 +245,7 @@ export class NationalrailTimesCard extends LitElement {
     if (this.isCancelled(entity) || !this.config.show_callingpoints || !entity?.calling_points) {
       return;
     }
-    let departureStopIndex = null;
+    // let departureStopIndex = null;
     let targetStopIndex = null;
 
     const renderStop = function(isHighlightedStop, innerHtml): TemplateResult {
@@ -256,12 +256,12 @@ export class NationalrailTimesCard extends LitElement {
         `
     };
 
-    const departureStopInPoints = entity.calling_points.find(stop => stop.crx == entity.station_code);
+    // const departureStopInPoints = entity.calling_points.find(stop => stop.crx == entity.station_code);
 
     const callingStops = entity.calling_points.map((stop, index) => {
       const isDepartureStop = stop.crs == entity.station_code;
       const isTargetStop = stop.crs == entity.target_station_code;
-      if (isDepartureStop) departureStopIndex = index;
+      // if (isDepartureStop) departureStopIndex = index;
       if (isTargetStop) targetStopIndex = index;
       const isLastStop = entity.calling_points.length - 1 == index;
 
@@ -276,21 +276,21 @@ export class NationalrailTimesCard extends LitElement {
         `) : null}
 
         ${renderStop(isTargetStop || isDepartureStop, html`
-          ${index > 0 || !departureStopInPoints ? html`<ha-icon class="arrow" icon="mdi:arrow-right"></ha-icon>`:null}
+          ${index > 0 ? html`<ha-icon class="arrow" icon="mdi:arrow-right"></ha-icon>`:null}
           <div class="calling-points__stop">${stop.locationName}</div>
           <div class="calling-points__time">(${stop.st})</div>
         `)}
       `;
     });
 
-    const originLocation = entity?.service && entity.service?.origin && entity.service.origin?.location && entity.service.origin.location.locationName ? entity.service.origin.location.locationName : null;
+    // const originLocation = entity?.service && entity.service?.origin && entity.service.origin?.location && entity.service.origin.location.locationName ? entity.service.origin.location.locationName : null;
     
-    if (originLocation) {
-      callingStops.unshift(renderStop(!departureStopIndex, html`
-        <div class="calling-points__stop">${originLocation}</div>
-        <div class="calling-points__time">(${this.departureTime(entity)})</div>
-      `));
-    }
+    // if (originLocation) {
+    //   callingStops.unshift(renderStop(!departureStopIndex, html`
+    //     <div class="calling-points__stop">${originLocation}</div>
+    //     <div class="calling-points__time">(${this.departureTime(entity)})</div>
+    //   `));
+    // }
 
     return html`<div class="calling-points">
       <!-- <div class="calling-points__title">Calling At</div> -->
