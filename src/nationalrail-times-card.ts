@@ -119,10 +119,18 @@ export class NationalrailTimesCard extends LitElement {
     return (diff / 1000) / 60;
   }
 
-  destinationVia(service): string | void {
-    if (service?.destination && service.destination?.location && service.destination.location?.via) {
-      return service.destination.location.via;
+  destinationVia(service): TemplateResult | void {
+    if (this.config.show_via_destination && service?.destination && service.destination?.location && service.destination.location?.via) {
+      return html`<div class="via-destination">${service.destination.location.via}</div>`;
     }
+  }
+
+  minutesWalk(entity): TemplateResult | void {
+    if (this.config.show_offset && 
+      entity.offset && 
+      entity.offset > 0) {
+        return html`<div class="offset-time">${entity.offset} minutes walk to station</div>`;
+      }
   }
 
   departureTime(entity): string | void {
@@ -156,7 +164,6 @@ export class NationalrailTimesCard extends LitElement {
       if (destination_stop) {
         return this.formatTime(destination_stop.st);
       }
-      console.log('National Rail API didn\'t respond with target destination. Why did this even return?')
       const lastStop = callingPoints[indexes - 1];
       return this.formatTime(lastStop.st);
     }
@@ -164,8 +171,11 @@ export class NationalrailTimesCard extends LitElement {
 
   stationMessage(entity): TemplateResult | void {
     if (this.config.show_warning && entity.message) {
-      const message = entity.message.replace('this station', entity.station_name + ' station');
-      return html`<div class="messages">${this._showWarning(message)}</div>`;
+      if (Array.isArray(entity.message)) {
+        return entity.message.map(message => html`<div class="messages">${this._showWarning(message)}</div>`);
+      } else {
+        return html`<div class="messages">${entity.message}</div>`
+      }
     }
   }
 
@@ -321,8 +331,8 @@ export class NationalrailTimesCard extends LitElement {
         <ha-icon class="title_icon" icon="mdi:bus-clock"></ha-icon>
         <div class="title_inner">
           ${this.config.name ? this.config.name : entity ? entity.attributes.friendly_name : "National Rail"}
-          ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
-          ${this.config.show_offset && entity.attributes.offset ? html`<div class="offset-time">${entity.attributes.offset} mimnutes walk to station</div>` : null}
+          ${this.destinationVia(entity.attributes.service)}
+          ${this.minutesWalk(entity.attributes)}
         </div>
       </div>
       ${this._renderErrors()}
@@ -346,8 +356,10 @@ export class NationalrailTimesCard extends LitElement {
               ${this._renderServiceStatus(entity.attributes, THEME.THIN)}
             </div>
           </div>
-          ${this.config.show_via_destination ? html`<div class="via-destination">${this.destinationVia(entity.attributes.service)}</div>` : null}
-          ${this.config.show_offset && entity.attributes.offset ? html`<div class="offset-time">${entity.attributes.offset} mimnutes walk to station</div>` : null}
+          <div class="title_footer">
+            ${this.destinationVia(entity.attributes.service)}
+            ${this.minutesWalk(entity.attributes)}
+          </div>
         </div>
       </div>
       ${this._renderErrors()}
@@ -364,7 +376,6 @@ export class NationalrailTimesCard extends LitElement {
     if (!entity) {
         return;
     }
-    console.log(entity);
     return html`
       <ha-card
         @action=${this._handleAction}
@@ -569,6 +580,22 @@ export class NationalrailTimesCard extends LitElement {
         justify-content: space-between;
       }
       
+      .thin_theme .title_footer {
+        display: flex;
+        gap: 5px;
+      }
+
+      .thin_theme .via-destination,
+      .thin_theme .offset-time {
+        padding-bottom: 0;
+      }
+
+      .thin_theme .messages {
+        margin-bottom: 4px;
+        font-size: 0.8em;
+        line-height: normal;
+      }
+
       .thin_theme .status_container {
         font-size: 0.8em;
       }
